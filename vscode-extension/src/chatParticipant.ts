@@ -35,7 +35,7 @@ export function registerChatParticipant(
   };
 
   const participant = vscode.chat.createChatParticipant(PARTICIPANT_ID, handler);
-  participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'icons', 'refactor.svg');
+  participant.iconPath = new vscode.ThemeIcon('wand');
 
   participant.followupProvider = {
     provideFollowups(result: vscode.ChatResult): vscode.ChatFollowup[] {
