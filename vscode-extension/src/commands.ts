@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { ProjectTreeProvider } from './treeDataProvider';
+import { PrerequisiteTreeProvider } from './prerequisiteTreeProvider';
+import { runAllChecks, clearCache, PrerequisiteResult } from './environmentChecker';
 
 const SLASH_COMMANDS: Record<string, string> = {
   analyze: '@legacy-refactor /analyze',
@@ -47,6 +49,7 @@ export function registerCommands(
   context: vscode.ExtensionContext,
   treeProvider: ProjectTreeProvider,
   workspaceRoot: string,
+  prerequisiteProvider?: PrerequisiteTreeProvider,
 ): void {
   context.subscriptions.push(
     vscode.commands.registerCommand('legacyRefactor.analyze', (projectName: string) => {
@@ -72,6 +75,22 @@ export function registerCommands(
 
     vscode.commands.registerCommand('legacyRefactor.openSettings', () => {
       vscode.commands.executeCommand('workbench.action.openSettings', 'legacyRefactor');
+    }),
+
+    vscode.commands.registerCommand('legacyRefactor.checkPrerequisites', async () => {
+      clearCache();
+      if (prerequisiteProvider) {
+        const results = await runAllChecks();
+        prerequisiteProvider.setResults(results);
+      }
+    }),
+
+    vscode.commands.registerCommand('legacyRefactor.openFixUrl', (item: PrerequisiteResult) => {
+      if (item.fixUrl.startsWith('vscode:')) {
+        vscode.commands.executeCommand('workbench.extensions.installExtension', 'GitHub.copilot');
+      } else {
+        vscode.env.openExternal(vscode.Uri.parse(item.fixUrl));
+      }
     }),
 
     vscode.commands.registerCommand('legacyRefactor.importProject', async () => {

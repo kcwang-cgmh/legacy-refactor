@@ -26,6 +26,10 @@
     "views": {
       "legacy-refactor": [
         {
+          "id": "legacyRefactor.prerequisites",
+          "name": "環境需求"
+        },
+        {
           "id": "legacyRefactor.projects",
           "name": "專案"
         }
@@ -38,7 +42,9 @@
       { "command": "legacyRefactor.preview", "title": "檢視報告", "icon": "$(open-preview)" },
       { "command": "legacyRefactor.refresh", "title": "重新整理", "icon": "$(refresh)" },
       { "command": "legacyRefactor.openSettings", "title": "模型設定", "icon": "$(gear)" },
-      { "command": "legacyRefactor.importProject", "title": "匯入舊專案", "icon": "$(add)" }
+      { "command": "legacyRefactor.importProject", "title": "匯入舊專案", "icon": "$(add)" },
+      { "command": "legacyRefactor.checkPrerequisites", "title": "重新檢查環境", "icon": "$(refresh)" },
+      { "command": "legacyRefactor.openFixUrl", "title": "開啟安裝頁面" }
     ],
     "viewsWelcome": [
       {
@@ -79,6 +85,11 @@
     },
     "menus": {
       "view/title": [
+        {
+          "command": "legacyRefactor.checkPrerequisites",
+          "when": "view == legacyRefactor.prerequisites",
+          "group": "navigation"
+        },
         {
           "command": "legacyRefactor.refresh",
           "when": "view == legacyRefactor.projects",
