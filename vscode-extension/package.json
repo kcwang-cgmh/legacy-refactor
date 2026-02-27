@@ -1,0 +1,60 @@
+{
+  "name": "legacy-refactor-helper",
+  "displayName": "Legacy Refactor Helper",
+  "description": "側邊欄 GUI 協助操作 legacy code 遷移工作流程",
+  "version": "0.1.0",
+  "publisher": "legacy-refactor-team",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "workspaceContains:legacy-codes"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "legacy-refactor",
+          "title": "Legacy Refactor",
+          "icon": "resources/icons/refactor.svg"
+        }
+      ]
+    },
+    "views": {
+      "legacy-refactor": [
+        {
+          "id": "legacyRefactor.projects",
+          "name": "專案"
+        }
+      ]
+    },
+    "commands": [
+      { "command": "legacyRefactor.analyze", "title": "分析舊專案", "icon": "$(play)" },
+      { "command": "legacyRefactor.plan", "title": "產出遷移計畫", "icon": "$(play)" },
+      { "command": "legacyRefactor.start", "title": "開始遷移", "icon": "$(play)" },
+      { "command": "legacyRefactor.preview", "title": "檢視報告", "icon": "$(open-preview)" },
+      { "command": "legacyRefactor.refresh", "title": "重新整理", "icon": "$(refresh)" }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "legacyRefactor.refresh",
+          "when": "view == legacyRefactor.projects",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
+}
