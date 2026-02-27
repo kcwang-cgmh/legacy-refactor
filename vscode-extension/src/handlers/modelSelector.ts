@@ -1,13 +1,16 @@
 import * as vscode from 'vscode';
 
-// Candidates ordered by preference (newest first).
-// The exact family strings may change as Copilot adds models —
-// use `vscode.lm.selectChatModels({ vendor: 'copilot' })` to inspect at runtime.
-// analyze / plan: 品質優先
-export const QUALITY_MODEL_CANDIDATES = ['claude-opus-4.6'];
+export function getQualityModelCandidates(): string[] {
+  const cfg = vscode.workspace.getConfiguration('legacyRefactor');
+  const model = cfg.get<string>('qualityModel', 'claude-opus-4.6');
+  return [model];
+}
 
-// start: 速度優先
-export const SPEED_MODEL_CANDIDATES = ['claude-sonnet-4.6'];
+export function getSpeedModelCandidates(): string[] {
+  const cfg = vscode.workspace.getConfiguration('legacyRefactor');
+  const model = cfg.get<string>('speedModel', 'claude-sonnet-4.6');
+  return [model];
+}
 
 export async function selectModel(
   preferredFamilies: string[],

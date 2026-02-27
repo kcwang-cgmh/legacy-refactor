@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { readReport } from '../contextBuilder';
-import { selectModel, SPEED_MODEL_CANDIDATES } from './modelSelector';
+import { selectModel, getSpeedModelCandidates } from './modelSelector';
 
 const SYSTEM_PROMPT = `你是一位 .NET 現代化遷移工程師。你的任務是根據遷移計畫，協助使用者執行遷移工作。
 
@@ -32,7 +32,7 @@ export async function handleStart(
     return;
   }
 
-  const model = await selectModel(SPEED_MODEL_CANDIDATES, request.model);
+  const model = await selectModel(getSpeedModelCandidates(), request.model);
 
   stream.progress(`正在使用 ${model.name} 準備遷移指引...`);
 

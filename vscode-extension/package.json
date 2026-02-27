@@ -52,6 +52,23 @@
         ]
       }
     ],
+    "configuration": {
+      "title": "Legacy Refactor",
+      "properties": {
+        "legacyRefactor.qualityModel": {
+          "type": "string",
+          "default": "claude-opus-4.6",
+          "enum": ["claude-opus-4.6", "claude-sonnet-4.6", "claude-haiku-4.5", "gpt-5.3-codex", "gpt-5-mini", "gemini-3-flash-preview", "gemini-3.1-pro-preview"],
+          "description": "用於分析(analyze)與規劃(plan)的模型，品質優先"
+        },
+        "legacyRefactor.speedModel": {
+          "type": "string",
+          "default": "claude-sonnet-4.6",
+          "enum": ["claude-opus-4.6", "claude-sonnet-4.6", "claude-haiku-4.5", "gpt-5.3-codex", "gpt-5-mini", "gemini-3-flash-preview", "gemini-3.1-pro-preview"],
+          "description": "用於執行遷移(start)的模型，速度優先"
+        }
+      }
+    },
     "menus": {
       "view/title": [
         {

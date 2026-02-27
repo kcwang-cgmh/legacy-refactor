@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { buildProjectContext } from '../contextBuilder';
-import { selectModel, QUALITY_MODEL_CANDIDATES } from './modelSelector';
+import { selectModel, getQualityModelCandidates } from './modelSelector';
 
 const SYSTEM_PROMPT = `你是一位 legacy code 分析專家。你的任務是分析舊的 .NET 專案程式碼，並產出一份完整的繁體中文 Markdown 分析報告。
 
@@ -37,7 +37,7 @@ export async function handleAnalyze(
 
   stream.progress('正在讀取專案檔案...');
 
-  const model = await selectModel(QUALITY_MODEL_CANDIDATES, request.model);
+  const model = await selectModel(getQualityModelCandidates(), request.model);
   const maxChars = (model.maxInputTokens ?? 100000) * 3;
   const projectContext = await buildProjectContext(workspaceRoot, projectName, maxChars);
 
