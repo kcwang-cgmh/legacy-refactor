@@ -1,0 +1,8 @@
+{
+  "dotnet.preferCSharpExtension": true,
+  "chat.promptFilesRecommendations": {
+    "analyze-legacy": true,
+    "plan-refactor": true,
+    "start-refactor": true
+  }
+}

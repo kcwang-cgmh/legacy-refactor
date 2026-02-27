@@ -1,0 +1,13 @@
+# 專案產出目錄 — 各自有獨立的版本控制或生命週期
+legacy-codes/*/
+docs/*/
+refactored-projects/*/
+
+# Claude Code 暫存
+.claude/plans/
+.claude/projects/
+.claude/worktrees/
+
+# OS
+.DS_Store
+Thumbs.db
