@@ -36,7 +36,15 @@
       { "command": "legacyRefactor.plan", "title": "產出遷移計畫", "icon": "$(play)" },
       { "command": "legacyRefactor.start", "title": "開始遷移", "icon": "$(play)" },
       { "command": "legacyRefactor.preview", "title": "檢視報告", "icon": "$(open-preview)" },
-      { "command": "legacyRefactor.refresh", "title": "重新整理", "icon": "$(refresh)" }
+      { "command": "legacyRefactor.refresh", "title": "重新整理", "icon": "$(refresh)" },
+      { "command": "legacyRefactor.openSettings", "title": "模型設定", "icon": "$(gear)" },
+      { "command": "legacyRefactor.importProject", "title": "匯入舊專案", "icon": "$(add)" }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "legacyRefactor.projects",
+        "contents": "尚未偵測到舊專案。\n請將專案資料夾放入 legacy-codes/ 目錄，或點擊下方按鈕匯入。\n[匯入舊專案](command:legacyRefactor.importProject)"
+      }
     ],
     "chatParticipants": [
       {
@@ -73,6 +81,11 @@
       "view/title": [
         {
           "command": "legacyRefactor.refresh",
+          "when": "view == legacyRefactor.projects",
+          "group": "navigation"
+        },
+        {
+          "command": "legacyRefactor.openSettings",
           "when": "view == legacyRefactor.projects",
           "group": "navigation"
         }
