@@ -11,6 +11,7 @@ AI 協作遷移框架 — 透過 VS Code Copilot Chat 的 slash commands，將 .
 | .NET 8 SDK | `winget install Microsoft.DotNet.SDK.8` 或[下載](https://dotnet.microsoft.com/download/dotnet/8.0) | 必要 |
 | Git | `winget install Git.Git` 或[下載](https://git-scm.com/downloads) | 必要 |
 | Node.js + npm | `winget install OpenJS.NodeJS.LTS` 或[下載](https://nodejs.org/) | 僅 React/Vue/Angular 前端需要 |
+| Legacy Refactor Helper 擴充套件 | 見下方「安裝 VS Code 擴充套件」 | 提供側邊欄 GUI 操作介面 |
 
 安裝完成後，在終端機確認：
 
@@ -19,11 +20,30 @@ dotnet --version    # 應顯示 8.x
 git --version
 ```
 
+## 安裝 VS Code 擴充套件
+
+本專案附帶 **Legacy Refactor Helper** 擴充套件，提供側邊欄 GUI 介面來管理遷移流程。
+
+```bash
+cd vscode-extension
+npm install
+npm run compile
+npx @vscode/vsce package --allow-missing-repository
+```
+
+打包完成後安裝產出的 `.vsix` 檔：
+
+```bash
+code --install-extension legacy-refactor-helper-0.1.0.vsix
+```
+
+安裝後 VS Code 左側 Activity Bar 會出現 **Legacy Refactor** 圖示，可從側邊欄直接操作分析、規劃與遷移流程。若 `legacy-codes/` 為空，側邊欄會顯示「匯入舊專案」按鈕，點擊即可選擇資料夾匯入。
+
 ## 快速開始（三步驟）
 
 ### 1. 放入舊專案
 
-將要遷移的 .NET Framework 專案資料夾放入 `legacy-codes/` 下：
+將要遷移的 .NET Framework 專案資料夾放入 `legacy-codes/` 下，或透過側邊欄的「匯入舊專案」按鈕選擇資料夾匯入：
 
 ```
 legacy-codes/
@@ -67,6 +87,10 @@ legacy-refactor/
 ├── .github/
 │   ├── copilot-instructions.md    ← Copilot Chat 全域指示
 │   └── instructions/              ← 各領域的詳細指示
+├── vscode-extension/              ← VS Code 擴充套件原始碼
+│   ├── package.json
+│   ├── src/
+│   └── out/
 ├── .claude/
 │   └── skills/                    ← Slash command 定義
 │       ├── analyze-legacy/

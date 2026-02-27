@@ -8,6 +8,11 @@ refactored-projects/*/
 .claude/projects/
 .claude/worktrees/
 
+# VS Code Extension
+vscode-extension/node_modules/
+vscode-extension/out/
+*.vsix
+
 # OS
 .DS_Store
 Thumbs.db

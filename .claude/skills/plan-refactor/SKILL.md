@@ -146,7 +146,7 @@ After generating, inform the user:
 
 - Summary of the plan (# phases, recommended frontend, key decisions)
 - Any items that need user input before proceeding
-- Suggest running `/start-refactor` after they review and approve the plan
+- 提示使用者在 VS Code 側邊欄的「Legacy Refactor」面板中，點擊「執行」按鈕以開始遷移
 
 ## Troubleshooting
 

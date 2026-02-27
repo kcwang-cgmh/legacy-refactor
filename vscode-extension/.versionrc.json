@@ -1,0 +1,27 @@
+{
+  "tagPrefix": "v",
+  "packageFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    }
+  ],
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    }
+  ],
+  "types": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "docs", "section": "Documentation" },
+    { "type": "style", "section": "Styles" },
+    { "type": "refactor", "section": "Refactoring" },
+    { "type": "perf", "section": "Performance" },
+    { "type": "test", "section": "Tests" },
+    { "type": "build", "hidden": true },
+    { "type": "ci", "hidden": true },
+    { "type": "chore", "hidden": true }
+  ]
+}
