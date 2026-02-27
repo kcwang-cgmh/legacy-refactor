@@ -194,7 +194,7 @@ The final report is written to: `docs/{project-name}/analysis-report.md`
 After generating, inform the user:
 
 - Summary of findings (project type, scale, key challenges)
-- Suggest running `/plan-refactor` as the next step
+- 提示使用者在 VS Code 側邊欄的「Legacy Refactor」面板中，點擊「規劃」按鈕以進行下一步
 
 ## Troubleshooting
 
