@@ -5,11 +5,12 @@
   "version": "0.1.0",
   "publisher": "legacy-refactor-team",
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.90.0"
   },
   "categories": ["Other"],
   "activationEvents": [
-    "workspaceContains:legacy-codes"
+    "workspaceContains:legacy-codes",
+    "onChatParticipant:legacy-refactor-team.legacy-refactor"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -37,6 +38,20 @@
       { "command": "legacyRefactor.preview", "title": "檢視報告", "icon": "$(open-preview)" },
       { "command": "legacyRefactor.refresh", "title": "重新整理", "icon": "$(refresh)" }
     ],
+    "chatParticipants": [
+      {
+        "id": "legacy-refactor-team.legacy-refactor",
+        "name": "legacy-refactor",
+        "fullName": "Legacy Refactor Helper",
+        "description": "分析舊專案並產出遷移計畫",
+        "isSticky": true,
+        "commands": [
+          { "name": "analyze", "description": "分析舊專案，產出分析報告" },
+          { "name": "plan", "description": "根據分析報告產出遷移計畫" },
+          { "name": "start", "description": "執行遷移計畫" }
+        ]
+      }
+    ],
     "menus": {
       "view/title": [
         {
@@ -54,7 +69,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/vscode": "^1.85.0",
+    "@types/vscode": "^1.90.0",
     "typescript": "^5.3.0"
   }
 }

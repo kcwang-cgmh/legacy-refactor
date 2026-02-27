@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ProjectTreeProvider } from './treeDataProvider';
 import { registerCommands } from './commands';
+import { registerChatParticipant } from './chatParticipant';
 
 export function activate(context: vscode.ExtensionContext) {
   const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -16,6 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   registerCommands(context, treeProvider, workspaceRoot);
+  registerChatParticipant(context, workspaceRoot);
 
   context.subscriptions.push(treeView);
 }

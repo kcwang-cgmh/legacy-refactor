@@ -3,9 +3,9 @@ import * as path from 'path';
 import { ProjectTreeProvider } from './treeDataProvider';
 
 const SLASH_COMMANDS: Record<string, string> = {
-  analyze: '/analyze-legacy',
-  plan: '/plan-refactor',
-  start: '/start-refactor',
+  analyze: '@legacy-refactor /analyze',
+  plan: '@legacy-refactor /plan',
+  start: '@legacy-refactor /start',
 };
 
 const REPORT_FILES: Record<string, string> = {
@@ -17,7 +17,7 @@ function runCopilotCommand(projectName: string, step: string, workspaceRoot: str
   const slashCommand = SLASH_COMMANDS[step];
   if (!slashCommand) { return; }
 
-  const message = `${slashCommand} ${projectName}`;
+  const message = `${slashCommand} ${projectName}`.trim();
 
   // Watch for report file creation (analyze and plan only)
   const reportFile = REPORT_FILES[step];
