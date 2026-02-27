@@ -10,7 +10,7 @@ AI 協作遷移框架 — 透過 VS Code Copilot Chat 的 slash commands，將 .
 | GitHub Copilot Chat 擴充套件 | VS Code Extensions 搜尋 `GitHub Copilot Chat` 安裝 | 需要 GitHub Copilot 訂閱 |
 | .NET 8 SDK | `winget install Microsoft.DotNet.SDK.8` 或[下載](https://dotnet.microsoft.com/download/dotnet/8.0) | 必要 |
 | Git | `winget install Git.Git` 或[下載](https://git-scm.com/downloads) | 必要 |
-| Node.js + npm | `winget install OpenJS.NodeJS.LTS` 或[下載](https://nodejs.org/) | 僅 React/Vue 前端需要 |
+| Node.js + npm | `winget install OpenJS.NodeJS.LTS` 或[下載](https://nodejs.org/) | 僅 React/Vue/Angular 前端需要 |
 | Legacy Refactor Helper 擴充套件 | 見下方「安裝 VS Code 擴充套件」 | 提供側邊欄 GUI 操作介面 |
 
 安裝完成後，在終端機確認：
