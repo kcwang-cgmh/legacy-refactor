@@ -4,10 +4,10 @@ import * as vscode from 'vscode';
 // The exact family strings may change as Copilot adds models —
 // use `vscode.lm.selectChatModels({ vendor: 'copilot' })` to inspect at runtime.
 // analyze / plan: 品質優先
-export const OPUS_CANDIDATES = ['claude-opus-4.6'];
+export const QUALITY_MODEL_CANDIDATES = ['claude-opus-4.6'];
 
 // start: 速度優先
-export const SONNET_CANDIDATES = ['claude-sonnet-4.6'];
+export const SPEED_MODEL_CANDIDATES = ['claude-sonnet-4.6'];
 
 export async function selectModel(
   preferredFamilies: string[],

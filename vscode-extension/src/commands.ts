@@ -13,7 +13,7 @@ const REPORT_FILES: Record<string, string> = {
   plan: 'migration-plan.md',
 };
 
-function runCopilotCommand(projectName: string, step: string, workspaceRoot: string): void {
+async function runCopilotCommand(projectName: string, step: string, workspaceRoot: string): Promise<void> {
   const slashCommand = SLASH_COMMANDS[step];
   if (!slashCommand) { return; }
 
@@ -37,7 +37,8 @@ function runCopilotCommand(projectName: string, step: string, workspaceRoot: str
     watcher.onDidChange(openPreview);
   }
 
-  // Open Copilot Chat and pre-fill with the slash command
+  // Open a new chat session, then send the query directly
+  await vscode.commands.executeCommand('workbench.action.chat.newChat');
   vscode.commands.executeCommand('workbench.action.chat.open', { query: message });
 }
 

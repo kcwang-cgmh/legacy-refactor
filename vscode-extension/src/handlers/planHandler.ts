@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { readReport } from '../contextBuilder';
-import { selectModel, OPUS_CANDIDATES } from './modelSelector';
+import { selectModel, QUALITY_MODEL_CANDIDATES } from './modelSelector';
 
 const SYSTEM_PROMPT = `你是一位 .NET 現代化遷移專家。你的任務是根據分析報告，產出一份完整的繁體中文 Markdown 遷移計畫。
 
@@ -36,7 +36,7 @@ export async function handlePlan(
     return;
   }
 
-  const model = await selectModel(OPUS_CANDIDATES, request.model);
+  const model = await selectModel(QUALITY_MODEL_CANDIDATES, request.model);
 
   stream.progress(`正在使用 ${model.name} 產出遷移計畫...`);
 
