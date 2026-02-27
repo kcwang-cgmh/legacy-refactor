@@ -7,7 +7,9 @@
   "engines": {
     "vscode": "^1.90.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
     "workspaceContains:legacy-codes",
     "onChatParticipant:legacy-refactor-team.legacy-refactor"
@@ -36,15 +38,50 @@
       ]
     },
     "commands": [
-      { "command": "legacyRefactor.analyze", "title": "分析舊專案", "icon": "$(play)" },
-      { "command": "legacyRefactor.plan", "title": "產出遷移計畫", "icon": "$(play)" },
-      { "command": "legacyRefactor.start", "title": "開始遷移", "icon": "$(play)" },
-      { "command": "legacyRefactor.preview", "title": "檢視報告", "icon": "$(open-preview)" },
-      { "command": "legacyRefactor.refresh", "title": "重新整理", "icon": "$(refresh)" },
-      { "command": "legacyRefactor.openSettings", "title": "模型設定", "icon": "$(gear)" },
-      { "command": "legacyRefactor.importProject", "title": "匯入舊專案", "icon": "$(add)" },
-      { "command": "legacyRefactor.checkPrerequisites", "title": "重新檢查環境", "icon": "$(refresh)" },
-      { "command": "legacyRefactor.openFixUrl", "title": "開啟安裝頁面" }
+      {
+        "command": "legacyRefactor.analyze",
+        "title": "分析舊專案",
+        "icon": "$(play)"
+      },
+      {
+        "command": "legacyRefactor.plan",
+        "title": "產出遷移計畫",
+        "icon": "$(play)"
+      },
+      {
+        "command": "legacyRefactor.start",
+        "title": "開始遷移",
+        "icon": "$(play)"
+      },
+      {
+        "command": "legacyRefactor.preview",
+        "title": "檢視報告",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "legacyRefactor.refresh",
+        "title": "重新整理",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "legacyRefactor.openSettings",
+        "title": "模型設定",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "legacyRefactor.importProject",
+        "title": "匯入舊專案",
+        "icon": "$(add)"
+      },
+      {
+        "command": "legacyRefactor.checkPrerequisites",
+        "title": "重新檢查環境",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "legacyRefactor.openFixUrl",
+        "title": "開啟安裝頁面"
+      }
     ],
     "viewsWelcome": [
       {
@@ -60,9 +97,18 @@
         "description": "分析舊專案並產出遷移計畫",
         "isSticky": true,
         "commands": [
-          { "name": "analyze", "description": "分析舊專案，產出分析報告" },
-          { "name": "plan", "description": "根據分析報告產出遷移計畫" },
-          { "name": "start", "description": "執行遷移計畫" }
+          {
+            "name": "analyze",
+            "description": "分析舊專案，產出分析報告"
+          },
+          {
+            "name": "plan",
+            "description": "根據分析報告產出遷移計畫"
+          },
+          {
+            "name": "start",
+            "description": "執行遷移計畫"
+          }
         ]
       }
     ],
@@ -72,13 +118,29 @@
         "legacyRefactor.qualityModel": {
           "type": "string",
           "default": "claude-opus-4.6",
-          "enum": ["claude-opus-4.6", "claude-sonnet-4.6", "claude-haiku-4.5", "gpt-5.3-codex", "gpt-5-mini", "gemini-3-flash-preview", "gemini-3.1-pro-preview"],
+          "enum": [
+            "claude-opus-4.6",
+            "claude-sonnet-4.6",
+            "claude-haiku-4.5",
+            "gpt-5.3-codex",
+            "gpt-5-mini",
+            "gemini-3-flash-preview",
+            "gemini-3.1-pro-preview"
+          ],
           "description": "用於分析(analyze)與規劃(plan)的模型，品質優先"
         },
         "legacyRefactor.speedModel": {
           "type": "string",
           "default": "claude-sonnet-4.6",
-          "enum": ["claude-opus-4.6", "claude-sonnet-4.6", "claude-haiku-4.5", "gpt-5.3-codex", "gpt-5-mini", "gemini-3-flash-preview", "gemini-3.1-pro-preview"],
+          "enum": [
+            "claude-opus-4.6",
+            "claude-sonnet-4.6",
+            "claude-haiku-4.5",
+            "gpt-5.3-codex",
+            "gpt-5-mini",
+            "gemini-3-flash-preview",
+            "gemini-3.1-pro-preview"
+          ],
           "description": "用於執行遷移(start)的模型，速度優先"
         }
       }
@@ -106,11 +168,16 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "lint": "eslint src --ext ts"
+    "lint": "eslint src --ext ts",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:dry": "standard-version --dry-run"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.90.0",
+    "standard-version": "^9.5.0",
     "typescript": "^5.3.0"
   }
 }
