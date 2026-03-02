@@ -34,7 +34,7 @@ npx @vscode/vsce package --allow-missing-repository
 打包完成後安裝產出的 `.vsix` 檔：
 
 ```bash
-code --install-extension legacy-refactor-helper-0.1.0.vsix
+code --install-extension legacy-refactor-helper-*.vsix
 ```
 
 安裝後 VS Code 左側 Activity Bar 會出現 **Legacy Refactor** 圖示，可從側邊欄直接操作分析、規劃與遷移流程。若 `legacy-codes/` 為空，側邊欄會顯示「匯入舊專案」按鈕，點擊即可選擇資料夾匯入。

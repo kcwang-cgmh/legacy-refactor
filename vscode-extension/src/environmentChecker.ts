@@ -20,7 +20,7 @@ export function clearCache(): void {
 
 export async function runAllChecks(): Promise<PrerequisiteResult[]> {
   if (cache) { return cache; }
-  const results = await Promise.all([checkCopilot(), checkNodeJs(), checkDotnet()]);
+  const results = await Promise.all([checkCopilot(), checkNodeJs(), checkDotnet(), checkGit()]);
   cache = results;
   return results;
 }
@@ -51,6 +51,16 @@ async function checkDotnet(): Promise<PrerequisiteResult> {
   try {
     const version = await execCommand('dotnet', ['--version']);
     return { ...base, status: 'installed', version: version.trim() };
+  } catch {
+    return { ...base, status: 'missing' };
+  }
+}
+
+async function checkGit(): Promise<PrerequisiteResult> {
+  const base = { id: 'git', label: 'Git', fixUrl: 'https://git-scm.com/downloads', fixLabel: '下載 Git' };
+  try {
+    const version = await execCommand('git', ['--version']);
+    return { ...base, status: 'installed', version: version.trim().replace('git version ', '') };
   } catch {
     return { ...base, status: 'missing' };
   }
