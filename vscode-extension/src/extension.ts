@@ -6,10 +6,7 @@ import { registerChatParticipant } from './chatParticipant';
 import { runAllChecks } from './environmentChecker';
 
 export function activate(context: vscode.ExtensionContext) {
-  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-  if (!workspaceRoot) {
-    return;
-  }
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? '';
 
   const prerequisiteProvider = new PrerequisiteTreeProvider();
   const prerequisiteView = vscode.window.createTreeView('legacyRefactor.prerequisites', {
@@ -23,7 +20,9 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   registerCommands(context, treeProvider, workspaceRoot, prerequisiteProvider);
-  registerChatParticipant(context, workspaceRoot);
+  if (workspaceRoot) {
+    registerChatParticipant(context, workspaceRoot);
+  }
 
   context.subscriptions.push(prerequisiteView, treeView);
 

@@ -12,6 +12,8 @@
   ],
   "activationEvents": [
     "workspaceContains:legacy-codes",
+    "onView:legacyRefactor.prerequisites",
+    "onView:legacyRefactor.projects",
     "onChatParticipant:legacy-refactor-team.legacy-refactor"
   ],
   "main": "./out/extension.js",
@@ -166,9 +168,11 @@
     }
   },
   "scripts": {
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts",
+    "package": "vsce package",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:major": "standard-version --release-as major",
@@ -177,6 +181,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.0.0",
     "standard-version": "^9.5.0",
     "typescript": "^5.3.0"
   }
