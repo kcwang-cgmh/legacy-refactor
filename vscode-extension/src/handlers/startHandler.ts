@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { readReport } from '../contextBuilder';
 import { selectModel, getSpeedModelCandidates } from './modelSelector';
+import { ThinkingLogger } from '../helpers/thinkingLogger';
 
 const SYSTEM_PROMPT = `你是一位 .NET 現代化遷移工程師。你的任務是根據遷移計畫，協助使用者執行遷移工作。
 
@@ -26,15 +27,15 @@ export async function handleStart(
     return;
   }
 
+  const logger = new ThinkingLogger(stream, '遷移指引');
+
+  logger.phase('正在讀取遷移計畫...', '載入遷移計畫');
+
   const migrationPlan = readReport(workspaceRoot, projectName, 'migration-plan.md');
   if (!migrationPlan) {
     stream.markdown(`找不到 \`${projectName}\` 的遷移計畫。請先執行 \`/plan ${projectName}\`。`);
     return;
   }
-
-  const model = await selectModel(getSpeedModelCandidates(), request.model);
-
-  stream.progress(`正在使用 ${model.name} 準備遷移指引...`);
 
   // Read existing progress if available
   const docsDir = path.join(workspaceRoot, 'docs', projectName);
@@ -44,8 +45,13 @@ export async function handleStart(
     try {
       const progress = fs.readFileSync(progressPath, 'utf-8');
       progressContext = `\n\n---\n\n目前遷移進度：\n\`\`\`json\n${progress}\n\`\`\``;
+      logger.phase('偵測到既有進度紀錄', '偵測遷移進度');
     } catch { /* ignore */ }
   }
+
+  const model = await selectModel(getSpeedModelCandidates(), request.model);
+
+  logger.modelInfo(model.name);
 
   const userPrompt = request.prompt.replace(projectName, '').trim();
   const additionalInstruction = userPrompt ? `\n\n使用者補充指示：${userPrompt}` : '';
@@ -57,6 +63,8 @@ export async function handleStart(
   ];
 
   const response = await model.sendRequest(messages, {}, token);
+
+  logger.streamingStart();
 
   const chunks: string[] = [];
   for await (const fragment of response.text) {
@@ -75,4 +83,6 @@ export async function handleStart(
     };
     fs.writeFileSync(progressPath, JSON.stringify(initialProgress, null, 2), 'utf-8');
   }
+
+  logger.complete();
 }

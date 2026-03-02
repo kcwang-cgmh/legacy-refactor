@@ -3,19 +3,29 @@ import * as fs from 'fs';
 
 const LEGACY_EXTENSIONS = ['.cs', '.csproj', '.sln', '.config', '.aspx', '.cshtml'];
 
+export interface ProjectContextResult {
+  content: string;
+  files: string[];
+  includedFiles: string[];
+  totalChars: number;
+  truncated: boolean;
+}
+
 export async function buildProjectContext(
   workspaceRoot: string,
   projectName: string,
   maxChars: number,
-): Promise<string> {
+): Promise<ProjectContextResult | null> {
   const projectDir = path.join(workspaceRoot, 'legacy-codes', projectName);
   if (!fs.existsSync(projectDir)) {
-    return '';
+    return null;
   }
 
   const files = collectFiles(projectDir, LEGACY_EXTENSIONS);
   const parts: string[] = [];
+  const includedFiles: string[] = [];
   let totalChars = 0;
+  let truncated = false;
 
   for (const filePath of files) {
     const relativePath = path.relative(projectDir, filePath);
@@ -24,14 +34,26 @@ export async function buildProjectContext(
 
     if (totalChars + entry.length > maxChars) {
       parts.push(`\n<!-- truncated: token budget reached (${maxChars} chars) -->\n`);
+      truncated = true;
       break;
     }
 
     parts.push(entry);
+    includedFiles.push(filePath);
     totalChars += entry.length;
   }
 
-  return parts.join('');
+  if (files.length === 0) {
+    return null;
+  }
+
+  return {
+    content: parts.join(''),
+    files,
+    includedFiles,
+    totalChars,
+    truncated,
+  };
 }
 
 export function readReport(
@@ -46,7 +68,7 @@ export function readReport(
   return fs.readFileSync(filePath, 'utf-8');
 }
 
-function collectFiles(dir: string, extensions: string[]): string[] {
+export function collectFiles(dir: string, extensions: string[]): string[] {
   const results: string[] = [];
   const entries = fs.readdirSync(dir, { withFileTypes: true });
 

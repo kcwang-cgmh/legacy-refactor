@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { readReport } from '../contextBuilder';
 import { selectModel, getQualityModelCandidates } from './modelSelector';
+import { ThinkingLogger } from '../helpers/thinkingLogger';
 
 const SYSTEM_PROMPT = `你是一位 .NET 現代化遷移專家。你的任務是根據分析報告，產出一份完整的繁體中文 Markdown 遷移計畫。
 
@@ -30,15 +31,22 @@ export async function handlePlan(
     return;
   }
 
+  const logger = new ThinkingLogger(stream, '計畫產出');
+
+  logger.phase('正在讀取分析報告...', '載入分析報告');
+
   const analysisReport = readReport(workspaceRoot, projectName, 'analysis-report.md');
   if (!analysisReport) {
     stream.markdown(`找不到 \`${projectName}\` 的分析報告。請先執行 \`/analyze ${projectName}\`。`);
     return;
   }
 
+  const reportKb = (analysisReport.length / 1024).toFixed(1);
+  logger.contextStats({ totalChars: analysisReport.length });
+
   const model = await selectModel(getQualityModelCandidates(), request.model);
 
-  stream.progress(`正在使用 ${model.name} 產出遷移計畫...`);
+  logger.modelInfo(model.name);
 
   const messages = [
     vscode.LanguageModelChatMessage.User(
@@ -47,6 +55,8 @@ export async function handlePlan(
   ];
 
   const response = await model.sendRequest(messages, {}, token);
+
+  stream.progress('AI 正在產出遷移計畫...');
 
   const chunks: string[] = [];
   for await (const fragment of response.text) {
@@ -58,7 +68,7 @@ export async function handlePlan(
   const reportPath = path.join(docsDir, 'migration-plan.md');
   fs.writeFileSync(reportPath, chunks.join(''), 'utf-8');
 
-  stream.markdown(`遷移計畫產出完成！已寫入 \`docs/${projectName}/migration-plan.md\`\n`);
+  logger.complete(`計畫已寫入 docs/${projectName}/migration-plan.md`);
 
   stream.button({
     command: 'legacyRefactor.preview',

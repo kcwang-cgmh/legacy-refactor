@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { buildProjectContext } from '../contextBuilder';
 import { selectModel, getQualityModelCandidates } from './modelSelector';
+import { ThinkingLogger } from '../helpers/thinkingLogger';
 
 const SYSTEM_PROMPT = `你是一位 legacy code 分析專家。你的任務是分析舊的 .NET 專案程式碼，並產出一份完整的繁體中文 Markdown 分析報告。
 
@@ -35,26 +36,38 @@ export async function handleAnalyze(
     return;
   }
 
-  stream.progress('正在讀取專案檔案...');
+  const logger = new ThinkingLogger(stream, '分析');
+
+  logger.phase('正在掃描專案檔案...', '探索專案結構');
 
   const model = await selectModel(getQualityModelCandidates(), request.model);
   const maxChars = (model.maxInputTokens ?? 100000) * 3;
-  const projectContext = await buildProjectContext(workspaceRoot, projectName, maxChars);
+  const result = await buildProjectContext(workspaceRoot, projectName, maxChars);
 
-  if (!projectContext) {
+  if (!result) {
     stream.markdown(`專案 \`${projectName}\` 中沒有找到可分析的程式碼檔案。`);
     return;
   }
 
-  stream.progress(`正在使用 ${model.name} 分析中...`);
+  logger.fileDiscovery(result.files, projectDir);
+
+  logger.contextStats({
+    fileCount: result.includedFiles.length,
+    totalChars: result.totalChars,
+    truncated: result.truncated,
+  });
+
+  logger.modelInfo(model.name);
 
   const messages = [
     vscode.LanguageModelChatMessage.User(
-      `${SYSTEM_PROMPT}\n\n---\n\n以下是專案 "${projectName}" 的原始碼：\n\n${projectContext}`,
+      `${SYSTEM_PROMPT}\n\n---\n\n以下是專案 "${projectName}" 的原始碼：\n\n${result.content}`,
     ),
   ];
 
   const response = await model.sendRequest(messages, {}, token);
+
+  stream.progress('AI 正在分析中...');
 
   const chunks: string[] = [];
   for await (const fragment of response.text) {
@@ -67,7 +80,7 @@ export async function handleAnalyze(
   const reportPath = path.join(docsDir, 'analysis-report.md');
   fs.writeFileSync(reportPath, chunks.join(''), 'utf-8');
 
-  stream.markdown(`分析完成！報告已寫入 \`docs/${projectName}/analysis-report.md\`\n`);
+  logger.complete(`報告已寫入 docs/${projectName}/analysis-report.md`);
 
   stream.button({
     command: 'legacyRefactor.preview',
