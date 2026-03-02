@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/kcwang-cgmh/legacy-refactor/compare/v0.1.2...v0.1.3) (2026-03-02)
+
+
+### Features
+
+* **vscode-extension:** 新增 Git 環境檢查並修正安裝指令 ([de49021](https://github.com/kcwang-cgmh/legacy-refactor/commit/de49021fffda8d79b9a0d859ecc938731ee357e8))
+
 ### [0.1.2](https://github.com/kcwang-cgmh/legacy-refactor/compare/v0.1.1...v0.1.2) (2026-03-02)
 
 ### 0.1.1 (2026-03-02)
