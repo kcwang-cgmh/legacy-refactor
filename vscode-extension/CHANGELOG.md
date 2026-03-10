@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/kcwang-cgmh/legacy-refactor/compare/v0.1.4...v0.1.5) (2026-03-10)
+
+
+### Features
+
+* **vscode-extension:** 重構 /start 指令改為觸發 Copilot Agent Mode 執行遷移 ([189b569](https://github.com/kcwang-cgmh/legacy-refactor/commit/189b5697c88284f65a9776cdb0c5bb0d9222d8ef))
+* **vscode-extension:** 新增 ThinkingLogger 並強化 context 建構回傳資訊 ([de21c46](https://github.com/kcwang-cgmh/legacy-refactor/commit/de21c46471d0b28d479543b4873cea6d55d91d9c))
+
 ### [0.1.4](https://github.com/kcwang-cgmh/legacy-refactor/compare/v0.1.3...v0.1.4) (2026-03-02)
 
 ### [0.1.3](https://github.com/kcwang-cgmh/legacy-refactor/compare/v0.1.2...v0.1.3) (2026-03-02)
