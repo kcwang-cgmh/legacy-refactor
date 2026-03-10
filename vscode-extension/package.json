@@ -56,6 +56,11 @@
         "icon": "$(play)"
       },
       {
+        "command": "legacyRefactor.startInAgentMode",
+        "title": "在 Agent Mode 中開始遷移",
+        "icon": "$(rocket)"
+      },
+      {
         "command": "legacyRefactor.preview",
         "title": "檢視報告",
         "icon": "$(open-preview)"

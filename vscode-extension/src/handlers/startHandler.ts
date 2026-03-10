@@ -2,17 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { readReport } from '../contextBuilder';
-import { selectModel, getSpeedModelCandidates } from './modelSelector';
+import { parseMigrationPlan, buildAgentPrompt } from '../helpers/promptBuilder';
 import { ThinkingLogger } from '../helpers/thinkingLogger';
-
-const SYSTEM_PROMPT = `你是一位 .NET 現代化遷移工程師。你的任務是根據遷移計畫，協助使用者執行遷移工作。
-
-請根據遷移計畫和目前的進度，指導下一步具體的實作步驟。包含：
-- 需要建立的檔案和程式碼
-- 需要修改的設定
-- 測試驗證步驟
-
-請使用繁體中文撰寫，使用台灣慣用的技術用語。`;
 
 export async function handleStart(
   request: vscode.ChatRequest,
@@ -27,8 +18,9 @@ export async function handleStart(
     return;
   }
 
-  const logger = new ThinkingLogger(stream, '遷移指引');
+  const logger = new ThinkingLogger(stream, '遷移準備');
 
+  // Step 1: 讀取遷移計畫
   logger.phase('正在讀取遷移計畫...', '載入遷移計畫');
 
   const migrationPlan = readReport(workspaceRoot, projectName, 'migration-plan.md');
@@ -37,52 +29,71 @@ export async function handleStart(
     return;
   }
 
-  // Read existing progress if available
+  // Step 2: 解析 phases
+  logger.phase('正在解析遷移階段...', '解析遷移計畫');
+
+  const phases = parseMigrationPlan(migrationPlan);
+
+  // Step 3: 讀取進度
   const docsDir = path.join(workspaceRoot, 'docs', projectName);
   const progressPath = path.join(docsDir, '.migration-progress.json');
-  let progressContext = '';
+  let progressJson: string | undefined;
+  let currentPhaseIndex = 0;
+
   if (fs.existsSync(progressPath)) {
     try {
-      const progress = fs.readFileSync(progressPath, 'utf-8');
-      progressContext = `\n\n---\n\n目前遷移進度：\n\`\`\`json\n${progress}\n\`\`\``;
-      logger.phase('偵測到既有進度紀錄', '偵測遷移進度');
+      progressJson = fs.readFileSync(progressPath, 'utf-8');
+      const progress = JSON.parse(progressJson);
+      // 從 currentPhase 欄位推算 index（例如 "Phase 2" → index 1）
+      if (progress.currentPhase) {
+        const phaseNum = progress.currentPhase.match(/\d+/);
+        if (phaseNum) {
+          currentPhaseIndex = Math.max(0, parseInt(phaseNum[0], 10) - 1);
+        }
+      }
+      logger.phase('偵測到既有進度紀錄', '載入遷移進度');
     } catch { /* ignore */ }
   }
 
-  const model = await selectModel(getSpeedModelCandidates(), request.model);
-
-  logger.modelInfo(model.name);
-
+  // Step 4: 建構 prompt
   const userPrompt = request.prompt.replace(projectName, '').trim();
-  const additionalInstruction = userPrompt ? `\n\n使用者補充指示：${userPrompt}` : '';
+  const prompt = buildAgentPrompt(
+    projectName,
+    phases,
+    currentPhaseIndex,
+    progressJson,
+    userPrompt || undefined,
+  );
 
-  const messages = [
-    vscode.LanguageModelChatMessage.User(
-      `${SYSTEM_PROMPT}\n\n---\n\n以下是專案 "${projectName}" 的遷移計畫：\n\n${migrationPlan}${progressContext}${additionalInstruction}`,
-    ),
-  ];
+  // Step 5: 將 prompt 寫入檔案（避免 chat input 字元限制）
+  fs.mkdirSync(docsDir, { recursive: true });
+  const promptPath = path.join(docsDir, '.migration-prompt.md');
+  fs.writeFileSync(promptPath, prompt, 'utf-8');
 
-  const response = await model.sendRequest(messages, {}, token);
+  // Step 6: 輸出摘要
+  if (phases.length > 0) {
+    stream.markdown('### 遷移計畫摘要\n\n');
+    for (let i = 0; i < phases.length; i++) {
+      const marker = i === currentPhaseIndex ? '➡️' : (i < currentPhaseIndex ? '✅' : '⬜');
+      stream.markdown(`${marker} **${phases[i].name}**\n\n`);
+    }
 
-  logger.streamingStart();
-
-  const chunks: string[] = [];
-  for await (const fragment of response.text) {
-    stream.markdown(fragment);
-    chunks.push(fragment);
+    const currentPhase = phases[currentPhaseIndex];
+    if (currentPhase) {
+      stream.markdown(`\n---\n\n即將執行：**${currentPhase.name}**\n\n`);
+    }
+  } else {
+    stream.markdown('已讀取遷移計畫，準備在 Agent Mode 中執行。\n\n');
   }
 
-  // Initialize progress file if it doesn't exist
-  if (!fs.existsSync(progressPath)) {
-    fs.mkdirSync(docsDir, { recursive: true });
-    const initialProgress = {
-      projectName,
-      startedAt: new Date().toISOString(),
-      currentPhase: 'Phase 1',
-      features: [],
-    };
-    fs.writeFileSync(progressPath, JSON.stringify(initialProgress, null, 2), 'utf-8');
-  }
+  stream.markdown(`> Prompt 已寫入 \`docs/${projectName}/.migration-prompt.md\`\n\n`);
+
+  // Step 7: 提供按鈕觸發 Agent mode
+  stream.button({
+    command: 'legacyRefactor.startInAgentMode',
+    title: '🚀 在 Agent Mode 中開始遷移',
+    arguments: [projectName],
+  });
 
   logger.complete();
 }

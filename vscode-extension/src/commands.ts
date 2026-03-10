@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs/promises';
+import * as fsSync from 'fs';
 import { ProjectTreeProvider } from './treeDataProvider';
 import { PrerequisiteTreeProvider } from './prerequisiteTreeProvider';
 import { runAllChecks, clearCache, PrerequisiteResult } from './environmentChecker';
@@ -90,6 +91,52 @@ export function registerCommands(
         vscode.commands.executeCommand('workbench.extensions.installExtension', 'GitHub.copilot');
       } else {
         vscode.env.openExternal(vscode.Uri.parse(item.fixUrl));
+      }
+    }),
+
+    vscode.commands.registerCommand('legacyRefactor.startInAgentMode', async (projectName: string) => {
+      const docsDir = path.join(workspaceRoot, 'docs', projectName);
+      const promptPath = path.join(docsDir, '.migration-prompt.md');
+      const progressPath = path.join(docsDir, '.migration-progress.json');
+
+      // 初始化進度檔（如果不存在）
+      if (!fsSync.existsSync(progressPath)) {
+        fsSync.mkdirSync(docsDir, { recursive: true });
+        const initialProgress = {
+          projectName,
+          startedAt: new Date().toISOString(),
+          currentPhase: 'Phase 1',
+          features: [],
+        };
+        fsSync.writeFileSync(progressPath, JSON.stringify(initialProgress, null, 2), 'utf-8');
+      }
+
+      // 建構簡短 query，引導 Agent 讀取完整 prompt 檔案
+      const promptRelPath = `docs/${projectName}/.migration-prompt.md`;
+      const query = `請閱讀工作區中的 ${promptRelPath} 檔案，然後按照裡面的指示執行遷移任務。直接開始執行，不需要再詢問確認。`;
+
+      // 開啟新 chat → 切換至 Agent mode → 注入 query
+      await vscode.commands.executeCommand('workbench.action.chat.newChat');
+
+      // 嘗試以 mode 參數開啟 agent mode
+      // 若 VS Code 版本不支援 mode 參數，fallback 到 URI scheme
+      try {
+        await vscode.commands.executeCommand('workbench.action.chat.open', {
+          query,
+          mode: 'agent',
+        });
+      } catch {
+        // Fallback: 透過 URI scheme 開啟 agent mode
+        await vscode.env.openExternal(
+          vscode.Uri.parse('vscode://GitHub.Copilot-Chat/chat?mode=agent'),
+        );
+        // 延遲注入 query
+        setTimeout(() => {
+          vscode.commands.executeCommand('workbench.action.chat.open', {
+            query,
+            isPartialQuery: false,
+          });
+        }, 1000);
       }
     }),
 
